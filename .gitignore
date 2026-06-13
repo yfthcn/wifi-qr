@@ -1,0 +1,15 @@
+# test ciktilari (CI'da uretilir)
+test/specs.json
+test/matrices.json
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# node
+node_modules/
+
+# misc
+*.log
+.DS_Store
