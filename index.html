@@ -1097,24 +1097,44 @@ window.QR = { qrEncode: qrEncode };
   function svgFor(modules, qz){
     qz = qz||4;
     var n=modules.length, dim=n+qz*2, path='';
-    for(var r=0;r<n;r++) for(var c=0;c<n;c++) if(modules[r][c]){
-      path+='M'+(c+qz)+' '+(r+qz)+'h1v1h-1z';
+    // Yatay run-length: yan yana siyah modülleri tek dikdörtgende birleştir
+    // (görsel olarak birebir aynı, çok daha az path komutu = daha küçük SVG).
+    for(var r=0;r<n;r++){
+      var c=0;
+      while(c<n){
+        if(modules[r][c]){
+          var start=c;
+          while(c<n && modules[r][c]) c++;
+          var run=c-start;
+          path+='M'+(start+qz)+' '+(r+qz)+'h'+run+'v1h-'+run+'z';
+        } else { c++; }
+      }
     }
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+dim+' '+dim+'" '+
       'shape-rendering="crispEdges"><rect width="'+dim+'" height="'+dim+'" fill="#fff"/>'+
       '<path d="'+path+'" fill="#000"/></svg>';
   }
 
-  function pngDataUrl(modules, qz, scale){
+  // QR matrisini canvas'a çizer (yatay run batch ile). toBlob için ham canvas döner.
+  function pngCanvas(modules, qz, scale){
     qz=qz||4; scale=scale||14;
     var n=modules.length, dim=(n+qz*2)*scale;
     var cv=document.createElement('canvas'); cv.width=cv.height=dim;
     var ctx=cv.getContext('2d');
     ctx.fillStyle='#fff'; ctx.fillRect(0,0,dim,dim);
     ctx.fillStyle='#000';
-    for(var r=0;r<n;r++) for(var c=0;c<n;c++) if(modules[r][c])
-      ctx.fillRect((c+qz)*scale,(r+qz)*scale,scale,scale);
-    return cv.toDataURL('image/png');
+    // Yatay run batch: satırdaki ardışık siyah modülleri tek fillRect ile çiz
+    for(var r=0;r<n;r++){
+      var c=0;
+      while(c<n){
+        if(modules[r][c]){
+          var start=c;
+          while(c<n && modules[r][c]) c++;
+          ctx.fillRect((start+qz)*scale,(r+qz)*scale,(c-start)*scale,scale);
+        } else { c++; }
+      }
+    }
+    return cv;
   }
 
   function safeName(){
@@ -1131,6 +1151,7 @@ window.QR = { qrEncode: qrEncode };
   }
   function placeholder(html, cls){
     qrbox.innerHTML='<div class="'+(cls||'empty')+'">'+html+'</div>';
+    qrbox.removeAttribute('role'); qrbox.removeAttribute('aria-label');
     metaEl.textContent='—'; stringEl.style.display='none';
     tagEl.style.color=''; printname.textContent='';
     titleEl.textContent='WiFi QR';
@@ -1153,6 +1174,10 @@ window.QR = { qrEncode: qrEncode };
     current={ modules:res.modules, str:str };
     qrbox.classList.add('flash');
     qrbox.innerHTML=svgFor(res.modules);
+    // Erişilebilirlik: etiketi container'a setAttribute ile koy (otomatik escape edilir);
+    // SVG string'i numerik kalır → README'nin "kullanıcı metni içermez" vaadi korunur.
+    qrbox.setAttribute('role','img');
+    qrbox.setAttribute('aria-label','WiFi QR — '+ssidEl.value);
     requestAnimationFrame(function(){ qrbox.classList.remove('flash'); });
     metaEl.textContent='v'+res.version+' · ECC '+res.ecl+' · '+res.size+'×'+res.size;
     stringEl.style.display='block'; stringEl.textContent=str;
@@ -1174,7 +1199,13 @@ window.QR = { qrEncode: qrEncode };
 
   dlpng.addEventListener('click', function(){
     if(!current) return;
-    download(pngDataUrl(current.modules), 'wifi-'+safeName()+'.png');
+    var name='wifi-'+safeName()+'.png';
+    pngCanvas(current.modules).toBlob(function(blob){
+      if(!blob) return;
+      var url=URL.createObjectURL(blob);
+      download(url, name);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    }, 'image/png');
   });
   dlsvg.addEventListener('click', function(){
     if(!current) return;
