@@ -20,7 +20,8 @@ Most online WiFi QR generators render server-side, which means your SSID and pas
 - **Üretim QR motoru** — vendor Nayuki qrcodegen (inline): **40 versiyon**, tüm modlar, otomatik versiyon, mask=auto, **boost kapalı → seçilen ECC (L/M/Q/H) birebir uygulanır**.
 - **Ayrıca kendi sıfırdan reference reimplementation'ı** (`qr.js`) — byte modu, versiyon 1–40, GF(256) Reed-Solomon, 8 maske penaltı puanlaması; üretimde kullanılmaz, doğruluk testlerinin temeli.
 - **UTF-8** — Türkçe SSID/şifreler dahil tam Unicode.
-- PNG ve **SVG** (vektörel, baskıya uygun) indirme, yazdırma, metni kopyalama.
+- PNG ve **SVG** (vektörel, baskıya uygun, kompakt run-length çıktı) indirme, yazdırma, metni kopyalama.
+- **Erişilebilirlik** — üretilen QR'a `role="img"` + `aria-label` (ağ adı) eklenir → ekran okuyucu dostu. Etiket container'a yazılır; SVG çıktısı saf numerik kalır.
 - Doğru WiFi URI kaçışlaması (`\ ; , : "`).
 
 ## Kullanım / Usage
@@ -59,7 +60,7 @@ Tasarımca saldırı yüzeyi minimumda tutulmuştur:
 - **Minimal tedarik zinciri.** Tek üçüncü taraf kod, inline gömülü Nayuki QR kütüphanesidir (MIT); **CDN yok, ağ isteği yok**, hepsi denetlenebilir tek dosyada. Çalışma anında paket çekilmez → kurulum/CDN kaynaklı tedarik zinciri riski yok.
 - **`eval` yok**, dinamik kod üretimi yok.
 
-> Not: Yazdırılan/kaydedilen QR, şifrenin kendisini taşır — onu da şifre gibi gizli tut. İndirme blob/dataURL üzerinden yapılır; eğer bir tarayıcı katı CSP altında indirmeyi engellerse `img-src` yönergesine `blob:` zaten eklidir.
+> Not: Yazdırılan/kaydedilen QR, şifrenin kendisini taşır — onu da şifre gibi gizli tut. İndirme blob üzerinden yapılır; eğer bir tarayıcı katı CSP altında indirmeyi engellerse `img-src` yönergesine `blob:` zaten eklidir.
 
 ## Tarayıcı desteği / Browser support
 
