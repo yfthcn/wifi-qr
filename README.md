@@ -75,4 +75,4 @@ Modern tarayıcıların hepsi (Chrome, Firefox, Safari, Edge). Clipboard API olm
 
 MIT (bkz. `LICENSE`). Güçlü copyleft tercih edersen AGPL-3.0'a çevirebilirsin.
 
-— [github.com/yfthcn](https://github.com/yfthcn) · kaktusdev.net
+— [github.com/yfthcn](https://github.com/yfthcn) · [kaktusdev.net](https://kaktusdev.net)
