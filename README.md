@@ -2,6 +2,11 @@
 
 [![verify-encoder](https://github.com/yfthcn/wifi-qr/actions/workflows/ci.yml/badge.svg)](https://github.com/yfthcn/wifi-qr/actions/workflows/ci.yml)
 
+**🔗 Canlı demo · Live demo → [yfthcn.github.io/wifi-qr](https://yfthcn.github.io/wifi-qr/)**
+
+> Host edilmiş sürüm de birebir aynı koddur ve CSP `connect-src 'none'` ile kilitlidir — şifre tarayıcıdan yine **çıkamaz**. İstersen `index.html`'i indirip tamamen çevrimdışı da çalıştırabilirsin.
+> *The hosted version runs the exact same code, locked with CSP `connect-src 'none'` — your password still **cannot** leave the browser. You can also download `index.html` and run it fully offline.*
+
 **Sıfır DIŞ/CDN bağımlılığı**, tek dosya, çevrimdışı WiFi QR kod üreticisi. Üretim QR motoru, dosyaya **inline gömülü** Nayuki kütüphanesidir (MIT) — CDN yok, ağ isteği yok, her şey tek `index.html` içinde. Ayrıca ISO/IEC 18004'e göre sıfırdan saf JavaScript ile yazılmış, CI'da referansa karşı **bit-identical** doğrulanan bir reference reimplementation (`qr.js`) bulunur.
 
 A single-file, offline WiFi QR code generator with **zero external/CDN dependencies** — everything ships inside one `index.html`. The production QR engine is the Nayuki library (MIT), inlined into the file (no CDN, no network). It also ships a from-scratch reference reimplementation (`qr.js`), written per ISO/IEC 18004 and verified **bit-identical** against a reference encoder in CI.
